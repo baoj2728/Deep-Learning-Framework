@@ -84,8 +84,7 @@ void Fill(CudaArray* out, scalar_t val) {
 __global__ void CompactKernel(const scalar_t* a, scalar_t* out, size_t size, CudaVec shape,
                               CudaVec strides, size_t offset) {
   /**
-   * The CUDA kernel for the compact opeation.  This should effectively map a single entry in the 
-   * non-compact input a, to the corresponding item (at location gid) in the compact array out.
+   * The CUDA kernel for the compact opeation.
    * 
    * Args:
    *   a: CUDA pointer to a array
@@ -112,11 +111,7 @@ __global__ void CompactKernel(const scalar_t* a, scalar_t* out, size_t size, Cud
 void Compact(const CudaArray& a, CudaArray* out, std::vector<int32_t> shape,
              std::vector<int32_t> strides, size_t offset) {
   /**
-   * Compact an array in memory.  Unlike the C++ version, in CUDA this will primarily call the 
-   * relevant CUDA kernel. In this case, we illustrate how you should set this up (i.e., we give 
-   * you the code for this fuction, and also the prototype for the CompactKernel() function).  For
-   * the functions after this, however, you'll need to define these kernels as you see fit to 
-   * execute the underlying function.
+   * Compact an array in memory.
    * 
    * Args:
    *   a: non-compact represntation of the array, given as input
@@ -151,8 +146,7 @@ __global__ void EwiseSetitemKernel(const scalar_t* a, scalar_t* out, size_t size
 void EwiseSetitem(const CudaArray& a, CudaArray* out, std::vector<int32_t> shape,
                   std::vector<int32_t> strides, size_t offset) {
   /**
-   * Set items in a (non-compact) array using CUDA.  Yyou will most likely want to implement a
-   * EwiseSetitemKernel() function, similar to those above, that will do the actual work.
+   * Set items in a (non-compact) array using CUDA.
    * 
    * Args:
    *   a: _compact_ array whose items will be written to out
@@ -425,27 +419,6 @@ void EwiseTanh(const CudaArray& a, CudaArray* out) {
 }
 
 
-/**
- * In the code the follows, use the above template to create analogous elementise
- * and and scalar operators for the following functions.  See the numpy backend for
- * examples of how they should work.
- *   - EwiseMul, ScalarMul
- *   - EwiseDiv, ScalarDiv
- *   - ScalarPower
- *   - EwiseMaximum, ScalarMaximum
- *   - EwiseEq, ScalarEq
- *   - EwiseGe, ScalarGe
- *   - EwiseLog
- *   - EwiseExp
- *   - EwiseTanh
- *
- * If you implement all these naively, there will be a lot of repeated code, so
- * you are welcome (but not required), to use macros or templates to define these
- * functions (however you want to do so, as long as the functions match the proper)
- * signatures above.
- */
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Elementwise and scalar operations
 ////////////////////////////////////////////////////////////////////////////////
@@ -547,8 +520,7 @@ __global__ void ReduceMaxKernal(const scalar_t* a, scalar_t* out, size_t size, s
 
 void ReduceMax(const CudaArray& a, CudaArray* out, size_t reduce_size) {
   /**
-   * Reduce by taking maximum over `reduce_size` contiguous blocks.  Even though it is inefficient,
-   * for simplicity you can perform each reduction in a single CUDA thread.
+   * Reduce by taking maximum over `reduce_size` contiguous blocks. 
    * 
    * Args:
    *   a: compact array of size a.size = out.size * reduce_size to reduce over
@@ -577,8 +549,7 @@ __global__ void ReduceSumKernal(const scalar_t* a, scalar_t* out, size_t size, s
 
 void ReduceSum(const CudaArray& a, CudaArray* out, size_t reduce_size) {
   /**
-   * Reduce by taking summation over `reduce_size` contiguous blocks.  Again, for simplicity you 
-   * can perform each reduction in a single CUDA thread.
+   * Reduce by taking summation over `reduce_size` contiguous blocks. 
    * 
    * Args:
    *   a: compact array of size a.size = out.size * reduce_size to reduce over
