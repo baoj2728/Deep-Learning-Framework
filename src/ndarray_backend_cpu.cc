@@ -263,33 +263,10 @@ void EwiseTanh(const AlignedArray& a, AlignedArray* out) {
   }
 }
 
-/**
- * In the code the follows, use the above template to create analogous element-wise
- * and and scalar operators for the following functions.  See the numpy backend for
- * examples of how they should work.
- *   - EwiseMul, ScalarMul
- *   - EwiseDiv, ScalarDiv
- *   - ScalarPower
- *   - EwiseMaximum, ScalarMaximum
- *   - EwiseEq, ScalarEq
- *   - EwiseGe, ScalarGe
- *   - EwiseLog
- *   - EwiseExp
- *   - EwiseTanh
- *
- * If you implement all these naively, there will be a lot of repeated code, so
- * you are welcome (but not required), to use macros or templates to define these
- * functions (however you want to do so, as long as the functions match the proper)
- * signatures above.
- */
-
 
 void Matmul(const AlignedArray& a, const AlignedArray& b, AlignedArray* out, uint32_t m, uint32_t n,
             uint32_t p) {
   /**
-   * Multiply two (compact) matrices into an output (also compact) matrix.  For this implementation
-   * you can use the "naive" three-loop algorithm.
-   *
    * Args:
    *   a: compact 2D array of size m x n
    *   b: compact 2D array of size n x p
@@ -314,16 +291,6 @@ inline void AlignedDot(const float* __restrict__ a,
                        float* __restrict__ out) {
 
   /**
-   * Multiply together two TILE x TILE matrices, and _add _the result to out (it is important to add
-   * the result to the existing out, which you should not set to zero beforehand).  We are including
-   * the compiler flags here that enable the compile to properly use vector operators to implement
-   * this function.  Specifically, the __restrict__ keyword indicates to the compile that a, b, and
-   * out don't have any overlapping memory (which is necessary in order for vector operations to be
-   * equivalent to their non-vectorized counterparts (imagine what could happen otherwise if a, b,
-   * and out had overlapping memory).  Similarly the __builtin_assume_aligned keyword tells the
-   * compiler that the input array will be aligned to the appropriate blocks in memory, which also
-   * helps the compiler vectorize the code.
-   *
    * Args:
    *   a: compact 2D array of size TILE x TILE
    *   b: compact 2D array of size TILE x TILE
@@ -346,15 +313,6 @@ inline void AlignedDot(const float* __restrict__ a,
 void MatmulTiled(const AlignedArray& a, const AlignedArray& b, AlignedArray* out, uint32_t m,
                  uint32_t n, uint32_t p) {
   /**
-   * Matrix multiplication on tiled representations of array.  In this setting, a, b, and out
-   * are all *4D* compact arrays of the appropriate size, e.g. a is an array of size
-   *   a[m/TILE][n/TILE][TILE][TILE]
-   * You should do the multiplication tile-by-tile to improve performance of the array (i.e., this
-   * function should call `AlignedDot()` implemented above).
-   *
-   * Note that this function will only be called when m, n, p are all multiples of TILE, so you can
-   * assume that this division happens without any remainder.
-   *
    * Args:
    *   a: compact 4D array of size m/TILE x n/TILE x TILE x TILE
    *   b: compact 4D array of size n/TILE x p/TILE x TILE x TILE
@@ -437,8 +395,7 @@ PYBIND11_MODULE(ndarray_backend_cpu, m) {
       .def("ptr", &AlignedArray::ptr_as_int)
       .def_readonly("size", &AlignedArray::size);
 
-  // return numpy array (with copying for simplicity, otherwise garbage
-  // collection is a pain)
+  // return numpy array 
   m.def("to_numpy", [](const AlignedArray& a, std::vector<size_t> shape,
                        std::vector<size_t> strides, size_t offset) {
     std::vector<size_t> numpy_strides = strides;
